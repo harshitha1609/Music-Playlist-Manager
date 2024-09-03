@@ -1,0 +1,218 @@
+ #include <stdio.h>
+ #include <stdlib.h>
+ #include <string.h>
+ struct Track {
+ char title[100];
+ char artist[100];
+ char mood[20];
+ char location[20];
+ struct Track* next;
+ struct Track* prev;
+ };
+ struct Track* playlistHead = NULL;
+ void addTrack(char title[], char artist[], char mood[], char location[]) {
+ struct Track* newTrack = (struct Track*)malloc(sizeof(struct Track));
+ if (newTrack == NULL) {
+ printf("Memory allocation failed.\n");
+ return;
+ }
+ strcpy(newTrack->title, title);
+ strcpy(newTrack->artist, artist);
+ strcpy(newTrack->mood, mood);
+ 2
+ strcpy(newTrack->location, location);
+newTrack->next = NULL;
+ newTrack->prev = NULL;
+ if (playlistHead == NULL) {
+ playlistHead = newTrack;
+ } else {
+ newTrack->next = playlistHead;
+ playlistHead->prev = newTrack;
+ playlistHead = newTrack;
+ }
+ printf("Added track: %s by %s to %s playlist\n", title, artist, mood);
+ }
+ void displayPlaylist() {
+ struct Track* current = playlistHead;
+ if (current == NULL) {
+ printf("Playlist is empty.\n");
+ return;
+ }
+ printf("Current Playlist:\n");
+ while (current != NULL) {
+ printf("%s by %s- Mood: %s- Location: %s\n", current->title, current->artist,
+ current->mood, current->location);
+ current = current->next;
+ }
+ }
+ 3
+ void displayPlaylistByMood(char mood[]) {
+struct Track* current = playlistHead;
+ int found = 0;
+ if (current == NULL) {
+ printf("Playlist is empty.\n");
+ return;
+ }
+ printf("Playlist for mood %s:\n", mood);
+ while (current != NULL) {
+ if (strcmp(current->mood, mood) == 0) {
+ printf("%s by %s- Mood: %s- Location: %s\n", current->title, current->artist,
+ current->mood, current->location);
+ found = 1;
+ }
+ current = current->next;
+ }
+ if (!found) {
+ printf("No tracks found for mood %s\n", mood);
+ }
+ }
+ void displayPlaylistByLocation(char location[]) {
+ struct Track* current = playlistHead;
+ int found = 0;
+ if (current == NULL) {
+ printf("Playlist is empty.\n");
+ return;
+ 4
+}
+ printf("Playlist for location %s:\n", location);
+ while (current != NULL) {
+ if (strcmp(current->location, location) == 0) {
+ printf("%s by %s- Mood: %s- Location: %s\n", current->title, current->artist,
+ current->mood, current->location);
+ found = 1;
+ }
+ current = current->next;
+ }
+ if (!found) {
+ printf("No tracks found for location %s\n", location);
+ }
+ }
+ void removeTrack(char title[]) {
+ struct Track* current = playlistHead;
+ struct Track* temp = NULL;
+ int found = 0;
+ if (current == NULL) {
+ printf("Playlist is empty.\n");
+ return;
+ }
+ while (current != NULL) {
+ if (strcmp(current->title, title) == 0) {
+ if (current->prev == NULL) {
+ 5
+playlistHead = current->next;
+ if (playlistHead != NULL) {
+ playlistHead->prev = NULL;
+ }
+ } else {
+ current->prev->next = current->next;
+ if (current->next != NULL) {
+ current->next->prev = current->prev;
+ }
+ }
+ temp =current;
+ current = current->next;
+ free(temp);
+ found = 1;
+ printf("Track removed: %s\n", title);
+ } else {
+ current = current->next;
+ }
+ }
+ if (!found) {
+ printf("Track not found: %s\n", title);
+ }
+ }
+ void addPredefinedSongs() {
+ addTrack("Hanuman chalisa","Shankar Mahadevan","Devotional","Temple");
+ addTrack("Raayini matram", "Hari Haran", "Devotional", "Temple");
+ addTrack("Sada Siva", "Karunya", "Devotional", "Temple");
+ 6
+addTrack("Swagatham Krishna", "Ramanan", "Devotional", "Temple");
+ addTrack("Gallo Telinattunde", "DSP", "happy vibes", "Travel");
+ addTrack("Hoyna Hoyna", "Anirudh Ravichander","happy vibes","Travel");
+ addTrack("Arere Manasa", "Sid Sriram", "happy vibes", "Travel");
+ addTrack("Neeve","Anuraag Kulkarni", "happy vibes", "Travel");
+ addTrack("Meghaalu Lekunna", "DSP", "romantic", "Home");
+ addTrack("Adiye", "Artist7", "romantic", "Home");
+ addTrack("Undiporaadhey", "Artist7", "romantic", "Home");
+ addTrack("Inthandam", "Artist7", "romantic", "Home");
+ addTrack("Telisene", "LV Revanth", "Broken", "Home");
+ addTrack("Kannula Basalu", "Karthick", "Broken", "Home");
+ addTrack("Agar tum saath ho", "Arjith singh", "Broken", "Home");
+ addTrack("Vinave Vinave", "GV Prakash", "Broken", "Home");
+ addTrack("Adiga Adiga", "Sid Sriram", "Broken", "Home");
+ addTrack("Jennifer Lopez", "Benny Dayal", "Mass Beats", "Party");
+ addTrack("Dum Masala", "Sanjith Hegde", "Mass Beats", "Party");
+ addTrack("Ringa Ringaa", "DSP", "Mass Beats", "Party");
+ addTrack("Seeti Maar", "DSP", "Mass Beats", "Party");
+ }
+ 7
+void cleanUp() {
+ struct Track* current = playlistHead;
+ struct Track* next;
+ while (current != NULL) {
+ next = current->next;
+ free(current);
+ current = next;
+ }
+ playlistHead = NULL;
+ printf("Memory freed. Exiting program.\n");
+ }
+ int main() {
+ char option;
+ char title[100];
+ char artist[100];
+ char mood[20];
+ char location[20];
+ addPredefinedSongs();
+ do {
+ printf("\nMenu:\n");
+ printf("A: Add a track to the playlist\n");
+ printf("R: Remove a track from the playlist\n");
+ printf("D: Display the entire playlist\n");
+ printf("M: Display the playlist based on a specific mood\n");
+ 8
+printf("L: Display the playlist based on a specific location\n");
+ printf("Q: Quit\n");
+ printf("Enter your choice: ");
+ scanf(" %c", &option);
+ switch (option) {
+ case 'A':
+ printf("Enter track title: ");
+ scanf(" %[^\n]", title);
+ printf("Enter artist: ");
+ scanf(" %[^\n]", artist);
+ printf("Enter mood: ");
+ scanf(" %[^\n]", mood);
+ printf("Enter location: ");
+ scanf(" %[^\n]", location);
+ addTrack(title, artist, mood, location);
+ break;
+ case 'R':
+ printf("Enter track title to remove: ");
+ scanf(" %[^\n]", title);
+ removeTrack(title);
+ break;
+ case 'D':
+ displayPlaylist();
+ break;
+ case 'M':
+ printf("Enter mood to display playlist: ");
+ scanf(" %[^\n]", mood);
+ displayPlaylistByMood(mood);
+ 9
+break;
+ case 'L':
+ printf("Enter location to display playlist: ");
+ scanf(" %[^\n]", location);
+ displayPlaylistByLocation(location);
+ break;
+ case 'Q':
+ cleanUp();
+ break;
+ default:
+ printf("Invalid option. Please try again.\n");
+ }
+ } while (option != 'Q');
+ return 0;
+ }
